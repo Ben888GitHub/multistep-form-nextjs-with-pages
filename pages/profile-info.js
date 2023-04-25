@@ -7,10 +7,10 @@ import Head from 'next/head';
 import { initializeStore } from '@/store/store';
 import { resetProfile } from '@/utils/resetData';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import withAuth from '@/components/withAuth';
+import { useEffect, useCallback, useState } from 'react';
 
 const ProfileInfo = () => {
+	const [isMounted, setIsMounted] = useState(true);
 	const { info, updateInfo } = initializeStore();
 
 	const router = useRouter();
@@ -39,13 +39,19 @@ const ProfileInfo = () => {
 		updateInfo(resetProfile);
 	};
 
-	useEffect(() => {
-		if (Object.keys(info).length === 0) {
-			router?.push('/');
-			// console.log('Please fill up your personal info');
-			return;
+	const handleCheckInfo = useCallback(async () => {
+		if (isMounted) {
+			Object.keys(info).length === 0 && router.push('/');
+			console.log('profile');
 		}
-	}, [router]);
+	}, [isMounted, router, info]);
+
+	useEffect(() => {
+		handleCheckInfo();
+		return () => {
+			setIsMounted(false);
+		};
+	}, [handleCheckInfo]);
 
 	return (
 		<>
@@ -147,11 +153,3 @@ const ProfileInfo = () => {
 };
 
 export default ProfileInfo;
-
-// export const getServerSideProps = async (ctx) => {
-// 	// const store = initializeStore();
-
-// 	return {
-// 		props: {}
-// 	};
-// };
