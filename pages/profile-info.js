@@ -28,7 +28,7 @@ const ProfileInfo = () => {
 	const handleSubmitForm = (formValues) => {
 		console.log(formValues);
 		updateInfo(formValues);
-		// todo, use router to push to next page
+		router.push('/notifs-method');
 	};
 
 	const resetForm = () => {
@@ -41,8 +41,7 @@ const ProfileInfo = () => {
 
 	const handleCheckInfo = useCallback(async () => {
 		if (isMounted) {
-			Object.keys(info).length === 0 && router.push('/');
-			console.log('profile');
+			!info?.firstName && router.back();
 		}
 	}, [isMounted, router, info]);
 
